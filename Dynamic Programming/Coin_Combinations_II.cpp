@@ -93,24 +93,34 @@ template<class T, class V> void _print(unordered_map<T, V> v) { cerr << "[ "; fo
 #endif
 
 /* -------------------- SOLUTION -------------------- */
-void solve() { // TC: O(nx) SC: O(x)
+void solve() { // TC: O(nx), SC: O(nx)
     int n, x;
     cin >> n >> x;
 
     vi a(n);
-    each(x, a) cin >> x;
+    each(v, a) cin >> v;
 
-    vector<ll> dp(x + 1, INT_MAX);
-    dp[0] = 0;
+    vvi dp(n + 1, vi(x + 1, 0)); // sum , coins
+    // dp[i][k] = no of ways to reach sum k where 
+    // only i -> n - 1 coins are usable
 
-    for(int k = 1; k <= x; k++) {
-        for(int i = 0; i < n; i++) {
-            if(k - a[i] >= 0) {
-                dp[k] = min(dp[k], dp[k - a[i]] + 1);
-            }
-        }
+    for(int i = 0; i <= n; i++) {
+        dp[i][0] = 1; // for sum 0 -> 1 possible way to reach it (all coins from i -> n - 1 are usable)
     }
-    cout << (dp[x] == INT_MAX ? -1 : dp[x]) << nl;
+
+    for(int i = n - 1; i >= 0; i--) {
+        for(int k = 1; k <= x; k++) {
+            if(k - a[i] >= 0) { // take
+                dp[i][k] = (dp[i][k] + dp[i][k - a[i]]) % MOD;
+            }
+            
+            // not Take
+            dp[i][k] = (dp[i][k] + dp[i + 1][k]) % MOD;
+        }  
+    }
+    
+
+    cout << dp[0][x] << nl;    
 }
 
 /* -------------------- MAIN -------------------- */

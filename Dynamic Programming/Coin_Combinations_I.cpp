@@ -93,36 +93,25 @@ template<class T, class V> void _print(unordered_map<T, V> v) { cerr << "[ "; fo
 #endif
 
 /* -------------------- SOLUTION -------------------- */
-int func(vi &a, vi &dp, int x, int n) {
-    if(x < 0) {
-        return 0;
-    } 
-    if(x == 0) {
-        return 1;
-    }
-
-    if(dp[x] != -1) {
-        return dp[x];
-    }
-
-    int count = 0;
-    for(int i = 0; i < n; i++) {
-        count = (count + func(a, dp, x - a[i], n)) % MOD; 
-    }
-
-    return dp[x] = count;
-}
-
-void solve() {
+void solve() { // TC: O(nx) SC: O(x)
     int n, x;
     cin >> n >> x;
 
     vi a(n);
     each(x, a) cin >> x;
 
-    vector<int> dp(x + 1, -1);
+    vector<int> dp(x + 1, 0);
+    dp[0] = 1;
 
-    cout << func(a, dp, x, n) << nl;
+    for(int k = 1; k <= x; k++) {
+        for(int i = 0; i < n; i++) {
+            if(k - a[i] >= 0) {
+                dp[k] = (dp[k] + dp[k - a[i]]) % MOD;
+            }
+        }
+    }
+
+    cout << dp[x] << nl;
 }
 
 /* -------------------- MAIN -------------------- */

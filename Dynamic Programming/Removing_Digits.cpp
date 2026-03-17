@@ -93,24 +93,29 @@ template<class T, class V> void _print(unordered_map<T, V> v) { cerr << "[ "; fo
 #endif
 
 /* -------------------- SOLUTION -------------------- */
-void solve() { // TC: O(nx) SC: O(x)
-    int n, x;
-    cin >> n >> x;
+void solve() { // TC: O(nlogn) SC: O(n);
+    int n;
+    cin >> n;
 
-    vi a(n);
-    each(x, a) cin >> x;
-
-    vector<ll> dp(x + 1, INT_MAX);
+    vector<int> dp(n + 1, INT_MAX);
+    
     dp[0] = 0;
+    for(int i = 1; i < 10; i++) {
+        dp[i] = 1;
+    }
 
-    for(int k = 1; k <= x; k++) {
-        for(int i = 0; i < n; i++) {
-            if(k - a[i] >= 0) {
-                dp[k] = min(dp[k], dp[k - a[i]] + 1);
-            }
+    for(int i = 10; i <= n; i++) {
+        int copy_of_el = i;
+
+        while(copy_of_el > 0) {
+            int rem = copy_of_el % 10;
+            if(rem != 0)
+                dp[i] = min(dp[i], 1 + dp[i - rem]);
+            copy_of_el /= 10;
         }
     }
-    cout << (dp[x] == INT_MAX ? -1 : dp[x]) << nl;
+
+    cout << dp[n] << nl;
 }
 
 /* -------------------- MAIN -------------------- */

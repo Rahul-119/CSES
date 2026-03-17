@@ -93,24 +93,50 @@ template<class T, class V> void _print(unordered_map<T, V> v) { cerr << "[ "; fo
 #endif
 
 /* -------------------- SOLUTION -------------------- */
-void solve() { // TC: O(nx) SC: O(x)
-    int n, x;
-    cin >> n >> x;
+bool isValid(int row, int col, int n) {
+    return row >= 0 && col >= 0;
+}
 
-    vi a(n);
-    each(x, a) cin >> x;
+void solve() { // TC: O(n * n), SC: O(n * n)
+    int n;
+    cin >> n;
 
-    vector<ll> dp(x + 1, INT_MAX);
-    dp[0] = 0;
+    vector<vector<char>> a(n, vector<char>(n, '#'));
+    rep(i, 0, n) {
+        string s;
+        cin >> s;
 
-    for(int k = 1; k <= x; k++) {
-        for(int i = 0; i < n; i++) {
-            if(k - a[i] >= 0) {
-                dp[k] = min(dp[k], dp[k - a[i]] + 1);
-            }
+        rep(j, 0, n) {
+            a[i][j] = s[j];
         }
     }
-    cout << (dp[x] == INT_MAX ? -1 : dp[x]) << nl;
+
+    if(a[0][0] == '*' || a[n - 1][n - 1] == '*') {
+        cout << 0 << nl;
+        return;
+    }
+
+    vector<vector<int>> dp(n, vector<int>(n, 0));
+    dp[0][0] = 1;
+
+    rep(row, 0, n) {
+        rep(col, 0, n) {
+            if(a[row][col] == '*') continue;
+            
+            // up
+            if(isValid(row - 1, col, n) && a[row - 1][col] != '*') {
+                dp[row][col] = (dp[row][col] + dp[row - 1][col]) % MOD;
+            }
+
+            // left
+            if(isValid(row, col - 1, n) && a[row][col - 1] != '*') {
+                dp[row][col] = (dp[row][col] + dp[row][col - 1]) % MOD;
+            }
+
+        }
+    }
+
+    cout << dp[n - 1][n - 1] << nl;
 }
 
 /* -------------------- MAIN -------------------- */
